@@ -16,9 +16,9 @@ class CreateLostItemsTable extends Migration
         Schema::create('lost_items', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->integer('category')->unsigned();
-            $table->integer('finder')->unsigned();
-            $table->integer('owner')->unsigned();
+            $table->integer('category')->unsigned()->nullable();
+            $table->integer('finder')->unsigned()->nullable();
+            $table->integer('owner')->unsigned()->nullable();
             $table->boolean('found');
             $table->foreign('category')
                 ->references('id')->on('categories')
