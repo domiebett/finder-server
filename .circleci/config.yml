@@ -1,0 +1,47 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: php:7.0
+        environment:
+          APP_ENV: testing
+          APP_DEBUG: true
+          APP_KEY: thisisarandomkey
+          DB_CONNECTION: psql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: finder_test
+          DB_USERNAME: php
+          QUEUE_DRIVER: sync
+      - image: postgres
+        environment:
+          POSTGRES_DATABASE: finder_test
+          POSTGRES_PASSWORD: finder_password
+    working_directory: ~/lumen
+    steps:
+      - run:
+          name: Install System Packages
+          command: apt-get update && apt-get install -y build-essential postgresql libpq-dev git unzip zlib1g-dev
+      - checkout
+      - run:
+          name: Install PHP Extensions
+          command: docker-php-ext-install pdo pdo_pgsql zip
+      - run:
+          name: Install Composer
+          command: |
+            php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+            php -r "copy('https://composer.github.io/installer.sig', 'composer-setup.sig');"
+            php -r "if (hash_file('SHA384', 'composer-setup.php') === trim(file_get_contents('composer-setup.sig'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+            php composer-setup.php
+            php -r "unlink('composer-setup.php');"
+      - run:
+          name: Install Project Dependencies
+          command: php composer.phar install
+      - run:
+          name: Initialize Database
+          command: |
+            php artisan migrate:refresh
+            php artisan db:seed
+      - run:
+          name: Run Tests
+          command: vendor/bin/phpunit
