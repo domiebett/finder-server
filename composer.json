@@ -28,7 +28,8 @@
     "scripts": {
         "post-root-package-install": [
             "php -r \"copy('.env.example', '.env');\""
-        ]
+        ],
+        "test": "phpunit --debug --coverage-clover build/logs/clover.xml"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

@@ -7,16 +7,16 @@ jobs:
           APP_ENV: testing
           APP_DEBUG: true
           APP_KEY: thisisarandomkey
-          DB_CONNECTION: psql
+          DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
           DB_DATABASE: finder_test
-          DB_USERNAME: php
+          DB_USERNAME: ubuntu
           QUEUE_DRIVER: sync
       - image: postgres
         environment:
-          POSTGRES_DATABASE: finder_test
-          POSTGRES_PASSWORD: finder_password
+          POSTGRES_DB: finder_test
+          POSTGRES_USER: ubuntu
     working_directory: ~/lumen
     steps:
       - run:

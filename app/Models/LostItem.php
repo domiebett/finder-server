@@ -38,12 +38,50 @@ class LostItem extends Model implements AuthenticatableContract, AuthorizableCon
     ];
 
     /**
+     * Build query and filter lost items to return only those
+     * required
+     *
+     * @param $params - filter parameters
+     *
+     * @return $lostItems - filtered items
+     */
+    public static function buildItemsQuery($params)
+    {
+        $lostItems = LostItem::when(
+            isset($params["searchQuery"]),
+            function($query) use ($params) {
+                $searchQuery = $params["searchQuery"];
+                return $query->where("name", "iLIKE", "%".$searchQuery."%");
+            }
+        )->when(
+            isset($params["categories"]),
+            function($query) use ($params) {
+                $categories = $params["categories"];
+                return $query->whereHas("category",
+                    function($query) use ($categories) {
+                        $query->whereIn("name", $categories);
+                    }
+                );
+            }
+        )->when(
+            isset($params["reporter"]),
+            function($query) use ($params) {
+                $reporter = $params["reporter"];
+                return $query->where("found", false)->whereNotNull($reporter);
+            }
+        );
+
+        return $lostItems;
+    }
+
+    /**
      * Get the owner who lost this item
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function owner() {
-        return $this->belongsTo("App\User", "owner");
+    public function owner()
+    {
+        return $this->belongsTo("App\Models\User", "owner");
     }
 
     /**
@@ -51,7 +89,18 @@ class LostItem extends Model implements AuthenticatableContract, AuthorizableCon
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function finder() {
-        return $this->belongsTo("App\User", "finder");
+    public function finder()
+    {
+        return $this->belongsTo("App\Models\User", "finder");
+    }
+
+    /**
+     * Get the category of the item
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category()
+    {
+        return $this->belongsTo("App\Models\Category", "category");
     }
 }

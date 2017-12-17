@@ -11,6 +11,13 @@
 |
 */
 
-$router->get('/', function () use ($router) {
+$router->get("/", function () use ($router) {
     return $router->app->version();
+});
+
+/**
+ * Routes for items
+ */
+$router->group(["prefix" => "api/v1"], function ($router) {
+    $router->get("items", "ItemController@get");
 });
