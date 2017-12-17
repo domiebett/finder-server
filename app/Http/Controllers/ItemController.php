@@ -34,11 +34,11 @@ class ItemController extends Controller
                 intval($request->get("limit")) : 20;
             $params = [];
 
-            if ($query = $request->get("q")) {
-                $params["searchQuery"] = $query;
+            if ($searchQuery = $request->get("q")) {
+                $params["searchQuery"] = $searchQuery;
             }
-            if ($type = $request->get("reporter")) {
-                $params["reporter"] = $type;
+            if ($reporter = $request->get("reporter")) {
+                $params["reporter"] = $reporter;
             }
             if($categories = $request->get("categories")) {
                 $params["categories"] = explode(",", $categories);
