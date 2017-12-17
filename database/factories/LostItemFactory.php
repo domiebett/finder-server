@@ -16,7 +16,11 @@ $factory->define(App\Models\LostItem::class, function (Faker\Generator $faker) {
         'name' => $faker->text(10),
         'found' => $faker->boolean(20),
         'category' => $faker->numberBetween(1, 4),
-        'owner' => $faker->numberBetween(1, 10),
-        'finder' => $faker->numberBetween(1, 10),
+        'finder' => function (array $lostItem) use($faker) {
+            return $lostItem['found'] ? $faker->numberBetween(1, 10) : $faker->randomElement([$faker->numberBetween(1, 10), null]);
+        },
+        'owner' => function (array $lostItem) use ($faker) {
+            return $lostItem['found'] ? $faker->numberBetween(1, 10) : ($lostItem['finder'] ? null : $faker->numberBetween(1, 10));
+        }
     ];
 });
