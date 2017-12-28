@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\LostItem;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -80,9 +81,10 @@ class ItemController extends Controller
             $formattedItem = (object) [
                 "id" => $item->id,
                 "name" => $item->name,
+                "description" => $item->description,
                 "category" => Category::find($item->category)->name,
-                "finder" => $item->finder,
-                "owner" => $item->owner,
+                "finder" => $item->finder ? User::find($item->finder) : null,
+                "owner" => $item->owner ? User::find($item->owner) : null,
                 "found" => $item->found,
                 "dateCreated" => $this->formatTime($item->created_at),
                 "dateUpdated" => $this->formatTime($item->updated_at)
