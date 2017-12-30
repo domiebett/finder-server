@@ -14,6 +14,7 @@
 $factory->define(App\Models\LostItem::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->text(10),
+        'description' => $faker->sentence(10, true),
         'found' => $faker->boolean(20),
         'category' => $faker->numberBetween(1, 4),
         'finder' => function (array $lostItem) use($faker) {
