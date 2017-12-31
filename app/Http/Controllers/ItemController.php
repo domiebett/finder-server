@@ -60,7 +60,7 @@ class ItemController extends Controller
             return $response;
         } catch(QueryException $exception) {
             $response = [
-                "message" => "You have entered wrong parameter. Please review and try again"
+                "message" => $exception->getMessage()
             ];
             return $this->respond($response, 400);
         }
