@@ -60,7 +60,7 @@ class ItemController extends Controller
             return $response;
         } catch(QueryException $exception) {
             $response = [
-                "message" => $exception->getMessage()
+                "message" => "We apologise. An error occured. "
             ];
             return $this->respond($response, 400);
         }
