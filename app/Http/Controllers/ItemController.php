@@ -66,6 +66,13 @@ class ItemController extends Controller
         }
     }
 
+    public function addItem(Request $request)
+    {
+        $itemName = $request->get("name");
+        $itemDescription = $request->get("description");
+        $itemCategory = $request->get("category");
+    }
+
     /**
      * Format request data
      * extracts returned request queries to match data on client side
