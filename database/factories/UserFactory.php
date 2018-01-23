@@ -19,5 +19,6 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'location' => $faker->city,
+        'password' => $faker->password
     ];
 });
