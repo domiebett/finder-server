@@ -11,6 +11,6 @@ class CategoryTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\Category::class, 4)->create();
+        factory(App\Models\Category::class, 14)->create();
     }
 }

@@ -21,3 +21,6 @@ Homestead.json
 
 #Text editors and IDES.
 .idea/
+
+#Composer
+*.lock

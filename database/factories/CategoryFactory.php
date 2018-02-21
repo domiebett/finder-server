@@ -13,6 +13,9 @@
 
 $factory->define(App\Models\Category::class, function (Faker\Generator $faker) {
     return [
-        'name' => $faker->unique()->randomElement(["card", "phones", "clothes", "others"]),
+        'name' => $faker->unique()->randomElement([
+            "card", "phone", "cloth", "food", "key", "stationery", "cutlery",
+            "vehicle", "bag", "toy", "furniture", "utensils", "container", "other"
+        ]),
     ];
 });

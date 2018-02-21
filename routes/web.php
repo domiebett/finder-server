@@ -24,5 +24,13 @@ $router->group(["prefix" => "api/v1"], function ($router) {
  * Routes for items
  */
 $router->group(["prefix" => "api/v1"], function ($router) {
-    $router->get("items", "ItemController@get");
+    $router->get("items", "ItemController@getItems");
+    $router->post("items", "ItemController@addItem");
+});
+
+/**
+ * Routes for categories
+ */
+$router->group(["prefix" => "api/v1"], function ($router) {
+    $router->get("categories", "CategoryController@getCategories");
 });

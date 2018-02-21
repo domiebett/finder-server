@@ -25,16 +25,19 @@ class LostItem extends Model implements AuthenticatableContract, AuthorizableCon
      * @var array
      */
     protected $fillable = [
-        'name', 'category', 'finder', 'owner'
+        'name', 'category', 'finder', 'owner', 'found', 'description'
     ];
 
     /**
-     * The attributes excluded from the model's JSON form.
+     * Validation rules for adding a lost item
      *
      * @var array
      */
-    protected $hidden = [
-        'password',
+    public static $addItemRules = [
+        "name" => "required|string",
+        "description" => "required|string",
+        "reporter" => "required|string",
+        "category" => "required"
     ];
 
     /**
