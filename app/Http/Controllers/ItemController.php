@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UnauthorizedException;
 use App\Models\Category;
 use App\Models\LostItem;
 use App\Models\User;
@@ -28,7 +29,7 @@ class ItemController extends Controller
      *
      * @return object $response - Response object
      */
-    public function get(Request $request)
+    public function getItems(Request $request)
     {
         try {
             $limit = $request->get("limit") ?
@@ -66,11 +67,39 @@ class ItemController extends Controller
         }
     }
 
+    public function addItem(Request $request) {
+        $this->validate($request, LostItem::$addItemRules);
+
+        $currentUser = $request->user();
+        if (!$currentUser) {
+            throw new UnauthorizedException("You must be logged in to add an item");
+        }
+
+        $currentUser->phone = $request->get("phone");
+
+        $item = new LostItem;
+        $item->name = $request->get("name");
+        $item->description = $request->get("description");
+        $item->category = $request->get("category");
+        $item->found = false;
+
+        if ($request->get("reporter") === "owner") {
+            $item->owner = $currentUser->id;
+        } else if ($request->get("reporter") === "finder") {
+            $item->finder = $currentUser->id;
+        }
+
+        $currentUser->save();
+        $item->save();
+
+        return $item;
+    }
+
     /**
      * Format request data
      * extracts returned request queries to match data on client side
      *
-     * @param Object $items - collection of items
+     * @param array $items - collection of items
      *
      * @return array - array of formatted items
      */
