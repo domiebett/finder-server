@@ -67,6 +67,15 @@ class ItemController extends Controller
         }
     }
 
+    /**
+     * Adds a lost item reported by user.
+     *
+     * @param Request $request - Request object
+     *
+     * @return LostItem - item that is lost
+     *
+     * @throws UnauthorizedException
+     */
     public function addItem(Request $request) {
         $this->validate($request, LostItem::$addItemRules);
 
