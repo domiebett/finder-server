@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
 use App\Exceptions\UnauthorizedException;
 use App\Models\Category;
@@ -29,7 +29,7 @@ class ItemController extends Controller
      *
      * @return object $response - Response object
      */
-    public function getItems(Request $request)
+    public function index(Request $request)
     {
         try {
             $limit = $request->get("limit") ?
@@ -42,7 +42,7 @@ class ItemController extends Controller
             if ($reporter = $request->get("reporter")) {
                 $params["reporter"] = $reporter;
             }
-            if($categories = $request->get("categories")) {
+            if ($categories = $request->get("categories")) {
                 $params["categories"] = explode(",", $categories);
             }
 
@@ -50,7 +50,7 @@ class ItemController extends Controller
                 ->orderBy("created_at", "desc")
                 ->paginate($limit);
 
-            $response["items"] = $this->formatItemData($lostItems);
+            $response["items"] = $this->formatItems($lostItems);
             $response["pagination"] = [
                 "totalCount" => $lostItems->total(),
                 "pageSize" => $lostItems->perPage(),
@@ -76,7 +76,8 @@ class ItemController extends Controller
      *
      * @throws UnauthorizedException
      */
-    public function addItem(Request $request) {
+    public function store(Request $request)
+    {
         $this->validate($request, LostItem::$addItemRules);
 
         $currentUser = $request->user();
@@ -112,7 +113,7 @@ class ItemController extends Controller
      *
      * @return array - array of formatted items
      */
-    private function formatItemData($items)
+    private function formatItems($items)
     {
         $formattedItems = [];
         foreach ($items as $item) {
@@ -121,8 +122,10 @@ class ItemController extends Controller
                 "name" => $item->name,
                 "description" => $item->description,
                 "category" => Category::find($item->category)->name,
-                "finder" => $item->finder ? User::find($item->finder) : null,
-                "owner" => $item->owner ? User::find($item->owner) : null,
+                "finder" => $item->finder ?
+                    $this->formatUser($item->finder()->first()) : null,
+                "owner" => $item->owner ?
+                    $this->formatUser($item->owner()->first()) : null,
                 "found" => $item->found,
                 "dateCreated" => $this->formatTime($item->created_at),
                 "dateUpdated" => $this->formatTime($item->updated_at)
@@ -130,6 +133,26 @@ class ItemController extends Controller
             $formattedItems[] = $formattedItem;
         }
         return $formattedItems;
+    }
+
+    /**
+     * Formats user from database to a more consistent format
+     *
+     * @param object $user - user whose data is to be formatted
+     * @return object - format
+     */
+    private function formatUser($user) {
+        $formattedUser = (object) [
+            "id" => $user->id,
+            "userName" => $user->user_name,
+            "email" => $user->email,
+            "firstName" => $user->first_name,
+            "lastName" => $user->lastName,
+            "location" => $user->location,
+            "dateCreated" => $this->formatTime($user->created_at),
+            "dateUpdated" => $this->formatTime($user->updated_at)
+        ];
+        return $formattedUser;
     }
 
     /**

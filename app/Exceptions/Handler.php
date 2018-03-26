@@ -80,6 +80,12 @@ class Handler extends ExceptionHandler
                     $e->getMessage()
                 );
                 break;
+            case $e instanceof InternalServerException:
+                $response = $this->composeJsonResponse(
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    $e->getMessage()
+                );
+                break;
             default:
                 $response = parent::render($request, $e);
         }

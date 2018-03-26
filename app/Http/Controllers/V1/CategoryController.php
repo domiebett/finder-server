@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
 use App\Models\Category;
 
@@ -21,7 +21,7 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getCategories() {
+    public function index() {
         $categories = Category::all();
         return $this->respond($categories, 200);
     }
