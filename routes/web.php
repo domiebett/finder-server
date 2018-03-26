@@ -14,8 +14,10 @@
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version("v1", [
-    "middleware" => "api.throttle", "limit" => 100,
-    "expires" => 5, "prefix" => "api/v1"
+    "middleware" => "api.throttle",
+    "limit" => 100,
+    "expires" => 5,
+    "prefix" => "api/v1"
 ], function ($api)
 {
 
