@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Exceptions\UnauthorizedException;
-use App\Models\Category;
 use App\Models\LostItem;
-use App\Models\User;
-use Illuminate\Database\QueryException;
+use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Database\QueryException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException as UnauthorizedException;
 
 class ItemController extends Controller
 {
@@ -40,6 +39,10 @@ class ItemController extends Controller
                 $params["searchQuery"] = $searchQuery;
             }
             if ($reporter = $request->get("reporter")) {
+                if(!in_array($reporter, ["owner", "finder"])) {
+                    $message = "You can only provide 'owner' or 'finder' as reporters";
+                    throw new NotFoundException($message);
+                }
                 $params["reporter"] = $reporter;
             }
             if ($categories = $request->get("categories")) {
@@ -102,7 +105,7 @@ class ItemController extends Controller
         $currentUser->save();
         $item->save();
 
-        return $item;
+        return $this->respond($item, 201);
     }
 
     /**
