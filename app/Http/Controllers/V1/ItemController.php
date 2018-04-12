@@ -6,7 +6,6 @@ use App\Models\LostItem;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException as UnauthorizedException;
 
 class ItemController extends Controller
@@ -30,44 +29,20 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        try {
-            $limit = $request->get("limit") ?
-                intval($request->get("limit")) : 20;
-            $params = [];
+        $limit = $request->get("limit") ?
+            intval($request->get("limit")) : 20;
 
-            if ($searchQuery = $request->get("q")) {
-                $params["searchQuery"] = $searchQuery;
-            }
-            if ($reporter = $request->get("reporter")) {
-                if(!in_array($reporter, ["owner", "finder"])) {
-                    $message = "You can only provide 'owner' or 'finder' as reporters";
-                    throw new NotFoundException($message);
-                }
-                $params["reporter"] = $reporter;
-            }
-            if ($categories = $request->get("categories")) {
-                $params["categories"] = explode(",", $categories);
-            }
+        $params = buildGetItemParams($request);
 
-            $lostItems = LostItem::buildItemsQuery($params)
-                ->orderBy("created_at", "desc")
-                ->paginate($limit);
+        $lostItems = LostItem::buildItemsQuery($params)
+            ->orderBy("created_at", "desc")
+            ->paginate($limit);
 
-            $response["items"] = $this->formatItems($lostItems);
-            $response["pagination"] = [
-                "totalCount" => $lostItems->total(),
-                "pageSize" => $lostItems->perPage(),
-                "lastPage" => $lostItems->lastPage(),
-                "currentPage" => $lostItems->currentPage(),
-            ];
+        $response = [];
+        $response["items"] = formatItems($lostItems);
+        $response["pagination"] = formatPagination($lostItems);
 
-            return $response;
-        } catch(QueryException $exception) {
-            $response = [
-                "message" => $exception->getMessage()
-            ];
-            return $this->respond($response, 400);
-        }
+        return $this->respond($response, 200);
     }
 
     /**
@@ -106,68 +81,5 @@ class ItemController extends Controller
         $item->save();
 
         return $this->respond($item, 201);
-    }
-
-    /**
-     * Format request data
-     * extracts returned request queries to match data on client side
-     *
-     * @param array $items - collection of items
-     *
-     * @return array - array of formatted items
-     */
-    private function formatItems($items)
-    {
-        $formattedItems = [];
-        foreach ($items as $item) {
-            $formattedItem = (object) [
-                "id" => $item->id,
-                "name" => $item->name,
-                "description" => $item->description,
-                "category" => Category::find($item->category)->name,
-                "finder" => $item->finder ?
-                    $this->formatUser($item->finder()->first()) : null,
-                "owner" => $item->owner ?
-                    $this->formatUser($item->owner()->first()) : null,
-                "found" => $item->found,
-                "dateCreated" => $this->formatTime($item->created_at),
-                "dateUpdated" => $this->formatTime($item->updated_at)
-            ];
-            $formattedItems[] = $formattedItem;
-        }
-        return $formattedItems;
-    }
-
-    /**
-     * Formats user from database to a more consistent format
-     *
-     * @param object $user - user whose data is to be formatted
-     * @return object - format
-     */
-    private function formatUser($user) {
-        $formattedUser = (object) [
-            "id" => $user->id,
-            "userName" => $user->user_name,
-            "email" => $user->email,
-            "firstName" => $user->first_name,
-            "lastName" => $user->lastName,
-            "location" => $user->location,
-            "dateCreated" => $this->formatTime($user->created_at),
-            "dateUpdated" => $this->formatTime($user->updated_at)
-        ];
-        return $formattedUser;
-    }
-
-    /**
-     * Checks if the given time is null and returns null else it returns
-     * the time in the date format
-     *
-     * @param string $time - the time in the date format
-     *
-     * @return mixed null|string
-     */
-    private function formatTime($time)
-    {
-        return $time === null ? null : date("Y-m-d H:i:s", $time->getTimestamp());
     }
 }

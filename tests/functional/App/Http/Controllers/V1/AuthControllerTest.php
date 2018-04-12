@@ -1,7 +1,8 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
+namespace Test\Functional\App\Http\Controllers\V1;
+
+use TestCase;
 
 class AuthControllerTest extends TestCase
 {
@@ -10,6 +11,10 @@ class AuthControllerTest extends TestCase
         "email" => "dominic@example.com",
         "password" => "password"
     ];
+
+    public function setUp() {
+        parent::setUp();
+    }
 
     /**
      * Test user registration success

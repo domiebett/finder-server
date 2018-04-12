@@ -20,12 +20,19 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "app/Helpers/ParamHelper.php",
+            "app/Helpers/FormatHelper.php"
+        ]
     },
     "autoload-dev": {
         "classmap": [
             "tests/",
             "database/"
+        ],
+        "files": [
+            "tests/utilities/test_utilities.php"
         ]
     },
     "scripts": {

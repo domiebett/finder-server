@@ -1,10 +1,15 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
+namespace Test\Functional\App\Http\Controllers\V1;
+
+use TestCase;
 
 class CategoryControllerTest extends TestCase
 {
+    public function setUp() {
+        parent::setUp();
+    }
+
     /**
      * Tests get all categories
      */

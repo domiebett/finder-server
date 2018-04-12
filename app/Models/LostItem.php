@@ -106,4 +106,32 @@ class LostItem extends Model implements AuthenticatableContract, AuthorizableCon
     {
         return $this->belongsTo("App\Models\Category", "category");
     }
+
+    /**
+     * Mutator to format the category value
+     */
+    public function getCategoryAttribute($value)
+    {
+        $category = Category::find($value)->name;
+        return $category;
+    }
+
+    /**
+     * Mutator to format the finder value
+     */
+    public function getFinderAttribute($value)
+    {
+        $finder = $value ?
+            formatUser(User::find($value)) : null;
+        return $finder;
+    }
+
+    /**
+     * Mutator to format the owner value
+     */
+    public function getOwnerAttribute($value) {
+        $owner = $value ?
+            formatUser(User::find($value)) : null;
+        return $owner;
+    }
 }
