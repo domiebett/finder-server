@@ -6,7 +6,6 @@ use App\Models\LostItem;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException as UnauthorizedException;
 
 class ItemController extends Controller
 {
@@ -27,7 +26,7 @@ class ItemController extends Controller
      *
      * @return object $response - Response object
      */
-    public function index(Request $request)
+    public function getItems(Request $request)
     {
         $limit = $request->get("limit") ?
             intval($request->get("limit")) : 20;
@@ -54,7 +53,7 @@ class ItemController extends Controller
      *
      * @throws UnauthorizedException
      */
-    public function store(Request $request)
+    public function addItems(Request $request)
     {
         $this->validate($request, LostItem::$addItemRules);
 

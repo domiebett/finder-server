@@ -51,7 +51,7 @@ function formatUser($user) {
         "userName" => $user->user_name,
         "email" => $user->email,
         "firstName" => $user->first_name,
-        "lastName" => $user->lastName,
+        "lastName" => $user->last_name,
         "location" => $user->location,
         "dateCreated" => formatTime($user->created_at),
         "dateUpdated" => formatTime($user->updated_at)

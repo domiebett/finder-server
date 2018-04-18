@@ -21,8 +21,9 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function getCategories() {
         $categories = Category::all();
-        return $this->respond($categories, 200);
+        $response["categories"] = $categories;
+        return $this->respond($response, 200);
     }
 }

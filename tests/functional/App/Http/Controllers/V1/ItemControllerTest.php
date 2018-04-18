@@ -94,10 +94,11 @@ class ItemControllerTest extends TestCase
         $this->post("api/v1/items", $this->lostItem);
 
         $response = json_decode($this->response->getContent(), true);
+        print_r($this->response->getContent());
 
         $this->assertResponseStatus(401);
 
-        $message = "401 Unauthorized";
+        $message = "You must be logged in to add an item";
         $this->assertEquals($response["message"], $message);
     }
 }

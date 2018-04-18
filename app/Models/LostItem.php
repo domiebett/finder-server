@@ -41,6 +41,13 @@ class LostItem extends Model implements AuthenticatableContract, AuthorizableCon
     ];
 
     /**
+     * Default date format
+     *
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d H:i:s';
+
+    /**
      * Build query and filter lost items to return only those
      * required
      *

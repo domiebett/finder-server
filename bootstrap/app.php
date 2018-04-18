@@ -86,7 +86,6 @@ $app->middleware([
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
-$app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 if ($app->environment() !== 'production') {
     $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 }

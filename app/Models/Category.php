@@ -38,6 +38,13 @@ class Category extends Model implements AuthenticatableContract, AuthorizableCon
     ];
 
     /**
+     * Default date format
+     *
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d H:i:s';
+
+    /**
      * Gets all items that fall under the category
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
