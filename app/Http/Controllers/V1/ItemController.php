@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\V1;
 
 use App\Models\LostItem;
-use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException;
+use App\Exceptions\UnauthorizedException;
+use Illuminate\Http\Response;
 
 class ItemController extends Controller
 {
@@ -24,9 +24,10 @@ class ItemController extends Controller
      *
      * @param Request $request - Request object
      *
-     * @return object $response - Response object
+     * @return Response $response - Response object
+     * @throws \App\Exceptions\BadRequestException
      */
-    public function getItems(Request $request)
+    public function index(Request $request)
     {
         $limit = $request->get("limit") ?
             intval($request->get("limit")) : 20;
@@ -49,30 +50,20 @@ class ItemController extends Controller
      *
      * @param Request $request - Request object
      *
-     * @return LostItem - item that is lost
-     *
-     * @throws UnauthorizedException
+     * @return Response - item that is lost
      */
-    public function addItems(Request $request)
+    public function store(Request $request)
     {
-        $this->validate($request, LostItem::$addItemRules);
+        $this->validates("addLostItem", $request, true);
 
         $currentUser = $request->user();
-        if (!$currentUser) {
-            throw new UnauthorizedException("You must be logged in to add an item");
-        }
-
         $currentUser->phone = $request->get("phone");
 
-        $item = new LostItem;
-        $item->name = $request->get("name");
-        $item->description = $request->get("description");
-        $item->category = $request->get("category");
-        $item->found = false;
+        $item = new LostItem($request->only("name", "description", "category"));
 
-        if ($request->get("reporter") === "owner") {
+        if ($request->reporter === "owner") {
             $item->owner = $currentUser->id;
-        } else if ($request->get("reporter") === "finder") {
+        } else if ($request->reporter === "finder") {
             $item->finder = $currentUser->id;
         }
 

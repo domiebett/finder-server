@@ -2,6 +2,9 @@
 
 /**
  * Format a list of items
+ *
+ * @param $lostItems
+ * @return array
  */
 function formatItems($lostItems) {
     $formattedItems = [];
@@ -14,13 +17,45 @@ function formatItems($lostItems) {
 }
 
 /**
-* Format request data
-* extracts returned request queries to match data on client side
-*
-* @param array $items - collection of items
-*
-* @return array - array of formatted items
-*/
+ * Formats multiple categories
+ *
+ * @param $categories
+ * @return array
+ */
+function formatCategories($categories) {
+    $formattedCategories = [];
+    foreach($categories as $category) {
+        $category = formatCategory($category);
+        $formattedCategories[] = $category;
+    }
+
+    return $formattedCategories;
+}
+
+/**
+ * Formats a single category
+ *
+ * @param $category
+ * @return object
+ */
+function formatCategory($category) {
+    $formattedCategory = (object) [
+        "id" => $category->id,
+        "name" => $category->name,
+        "dateCreated" => formatTime($category->created_at),
+        "dataUpdated" => formatTime($category->updated_at)
+    ];
+
+    return $formattedCategory;
+}
+
+/**
+ * Format request data
+ * extracts returned request queries to match data on client side
+ *
+ * @param $item
+ * @return object - array of formatted items
+ */
 function formatItem($item)
 {
     $formattedItem = (object) [
@@ -48,14 +83,12 @@ function formatItem($item)
 function formatUser($user) {
     $formattedUser = (object) [
         "id" => $user->id,
-        "userName" => $user->user_name,
+        "username" => $user->username,
+        "phone" => $user->phone,
         "email" => $user->email,
-        "firstName" => $user->first_name,
-        "lastName" => $user->last_name,
-        "location" => $user->location,
-        "dateCreated" => formatTime($user->created_at),
-        "dateUpdated" => formatTime($user->updated_at)
+        "location" => $user->location
     ];
+
     return $formattedUser;
 }
 

@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class Handler extends ExceptionHandler
 {
@@ -29,8 +32,9 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $e
+     * @param  \Exception $e
      * @return void
+     * @throws Exception
      */
     public function report(Exception $e)
     {
@@ -86,6 +90,28 @@ class Handler extends ExceptionHandler
                     $e->getMessage()
                 );
                 break;
+
+            case $e instanceof JWTException:
+                $response = $this->composeJsonResponse(
+                    Response::HTTP_UNAUTHORIZED,
+                    "Token not provided"
+                );
+                break;
+
+            case $e instanceof TokenExpiredException:
+                $response = $this->composeJsonResponse(
+                    Response::HTTP_UNAUTHORIZED,
+                    "Token has expired"
+                );
+                break;
+
+            case $e instanceof TokenInvalidException:
+                $response = $this->composeJsonResponse(
+                    Response::HTTP_UNAUTHORIZED,
+                    "Invalid Token"
+                );
+                break;
+
             default:
                 $response = parent::render($request, $e);
         }

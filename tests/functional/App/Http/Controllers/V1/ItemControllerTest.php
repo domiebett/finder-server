@@ -66,7 +66,7 @@ class ItemControllerTest extends TestCase
 
         $response = json_decode($this->response->getContent());
 
-        $this->assertResponseStatus(404);
+        $this->assertResponseStatus(400);
 
         $errorMessage = "You can only provide 'owner' or 'finder' as reporters";
         $this->assertEquals($errorMessage, $response->message);
@@ -83,8 +83,8 @@ class ItemControllerTest extends TestCase
         $response = json_decode($this->response->getContent(), true);
 
         $this->assertResponseStatus(201);
-        $this->assertEquals($response["lost_item"]["id"], 41);
-        $this->assertEquals($response["lost_item"]["name"], "Lost Item");
+        $this->assertEquals($response["id"], 41);
+        $this->assertEquals($response["name"], "Lost Item");
     }
 
     /**
@@ -94,11 +94,10 @@ class ItemControllerTest extends TestCase
         $this->post("api/v1/items", $this->lostItem);
 
         $response = json_decode($this->response->getContent(), true);
-        print_r($this->response->getContent());
 
         $this->assertResponseStatus(401);
 
-        $message = "You must be logged in to add an item";
+        $message = "Unauthorized. Please provide a valid token";
         $this->assertEquals($response["message"], $message);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
+use App\Exceptions\BadRequestException;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundException;
 
 /**
  * Helps to build parameter to be used to build query
@@ -20,7 +20,7 @@ function buildGetItemParams(Request $request) {
     if ($reporter = $request->get("reporter")) {
         if(!in_array($reporter, ["owner", "finder"])) {
             $message = "You can only provide 'owner' or 'finder' as reporters";
-            throw new NotFoundException($message);
+            throw new BadRequestException($message);
         }
         $params["reporter"] = $reporter;
     }

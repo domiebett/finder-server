@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Exceptions\BadRequestException;
+use App\Exceptions\UnauthorizedException;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -30,65 +32,42 @@ class AuthController extends Controller
      *
      * @param Request $request - Request object
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function login(Request $request)
     {
-        $this->validate($request, [
-            'email'    => 'required|email|max:255',
-            'password' => 'required',
-        ]);
+        $this->validates("login", $request);
 
-
-        try {
-            if (! $token = $this->jwt->attempt($request->only('email', 'password'))) {
-                return response()->json('User is not registered', 404);
-            }
-        } catch (TokenExpiredException $e) {
-            return response()->json(['token_expired'], $e->getStatusCode());
-        } catch (TokenInvalidException $e) {
-            return response()->json(['token_invalid'], $e->getStatusCode());
-        } catch (JWTException $e) {
-            return response()->json(['token_absent' => $e->getMessage()], $e->getStatusCode());
+        $token = $this->jwt->attempt($request->only('email', 'password'));
+        if (! $token) {
+            return $this->message('The email or password is wrong', 401);
         }
 
-        $user = $request->user();
-        return response()->json(compact('token', 'user'), 200);
+        $user = formatUser($this->jwt->user());
+
+        return $this->respond(compact('token','user'), 200);
     }
 
     /**
      * Registers new users
      *
      * @param Request $request - Request object
+     * @return \Illuminate\Http\Response
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @throws BadRequestException
      */
-    public function register(Request $request)
+    public function signup(Request $request)
     {
-        $this->validate($request, [
-            "name" => "required|max:100",
-            "email"    => "required|email|max:255",
-            "password" => "required",
-        ]);
+        $this->validates("signup", $request);
 
-        try {
-            $user = new User(
-                [
-                    "user_name" => $request->input("name"),
-                    "email" => $request->input("email"),
-                ]
-            );
-            $user->password = Hash::make(
-                $request->input($request->input("password"))
-            );
-            $user->save();
-        }
-        catch(QueryException $e) {
-            return response()->json([
-                "message" => $e->getMessage()
-            ], 400);
+        if(User::where("email", $request->email)->first()) {
+            throw new BadRequestException("Already registered. Please Login");
         }
 
-        return $this->login($request);
+        $user = new User($request->all());
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return $this->message("Successful sign up. Please login");
     }
 }

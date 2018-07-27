@@ -19,7 +19,7 @@ class CreateLostItemsTable extends Migration
             $table->integer('category')->unsigned()->nullable();
             $table->integer('finder')->unsigned()->nullable();
             $table->integer('owner')->unsigned()->nullable();
-            $table->boolean('found');
+            $table->boolean('found')->default(false);
             $table->foreign('category')
                 ->references('id')->on('categories')
                 ->onDelete('cascade');

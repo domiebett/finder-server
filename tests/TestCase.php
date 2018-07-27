@@ -39,6 +39,20 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
         );
     }
 
+    public function makeAdmin($userId) {
+        $this->be(
+            factory(\App\Models\User::class)->make(
+                [
+                    "id" => $userId,
+                    "user_name" => "Admin",
+                    "email" => "admin@example.com",
+                    "password" => "password",
+                    "admin" => true
+                ]
+            )
+        );
+    }
+
     /**
      * Delete data from tables
      */

@@ -3,17 +3,11 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
 use Tymon\JWTAuth\JWTAuth;
 
-class Authenticate
+class AdminMiddleware
 {
-    /**
-     * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
-     * @return void
-     */
+
     public function __construct(JWTAuth $jwt)
     {
         $this->jwt = $jwt;
@@ -24,15 +18,19 @@ class Authenticate
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  string|null  $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle($request, Closure $next)
     {
-
-        if (! $this->jwt->user()) {
+        if (! $user = $this->jwt->user()) {
             return response([
                 "message" => "Unauthorized. Please provide a valid token"
+            ], 401);
+        }
+
+        if (! $user->admin) {
+            return response([
+                "message" => "You do not have permission to access this route"
             ], 401);
         }
 

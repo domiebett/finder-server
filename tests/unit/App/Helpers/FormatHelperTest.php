@@ -43,7 +43,5 @@ class FormatHelperTest extends TestCase
         $this->assertObjectHasAttribute("firstName", $formattedUser);
         $this->assertObjectHasAttribute("lastName", $formattedUser);
         $this->assertObjectHasAttribute("location", $formattedUser);
-        $this->assertObjectHasAttribute("dateCreated", $formattedUser);
-        $this->assertObjectHasAttribute("dateUpdated", $formattedUser);
     }
 }

@@ -18,16 +18,23 @@ $router->get("/", function () use ($router) {
 // Routes for auth
 $router->group(["prefix" => "api/v1/auth"], function($router) {
     $router->post("login", "V1\AuthController@login");
-    $router->post("register", "V1\AuthController@register");
+    $router->post("signup", "V1\AuthController@signup");
 });
 
 // Routes for items
-$router->group(["prefix" => "api/v1"], function($router) {
-    $router->get("items", "V1\ItemController@getItems");
-    $router->post("items", "V1\ItemController@addItem");
+$router->group(["prefix" => "api/v1/items"], function($router) {
+    $router->get("/", ["uses" => "V1\ItemController@index"]);
+    $router->post("/", ["middleware" => "auth", "uses" => "V1\ItemController@store"]);
 });
 
 // Routes for categories
-$router->group(["prefix" => "api/v1"], function($router) {
-    $router->get("categories", "V1\CategoryController@getCategories");
+$router->group(["prefix" => "api/v1/categories"], function($router) {
+    $router->get("/", "V1\CategoryController@index");
+    $router->post("/", ["middleware" => "admin", "uses" => "V1\CategoryController@store"]);
+});
+
+// Routes for files
+$router->group(["prefix" => "api/v1/files"], function($router) {
+    $router->post("/", "V1\FileController@store");
+    $router->get("/", "V1\FileController@index");
 });

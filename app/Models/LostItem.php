@@ -29,18 +29,6 @@ class LostItem extends Model implements AuthenticatableContract, AuthorizableCon
     ];
 
     /**
-     * Validation rules for adding a lost item
-     *
-     * @var array
-     */
-    public static $addItemRules = [
-        "name" => "required|string",
-        "description" => "required|string",
-        "reporter" => "required|string",
-        "category" => "required"
-    ];
-
-    /**
      * Default date format
      *
      * @var string
