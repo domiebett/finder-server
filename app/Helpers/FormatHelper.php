@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\LostItem;
+
 /**
  * Format a list of items
  *
@@ -53,12 +55,14 @@ function formatCategory($category) {
  * Format request data
  * extracts returned request queries to match data on client side
  *
- * @param $item
- * @return object - array of formatted items
+ * @param LostItem $item
+ * @return array - array of formatted items
  */
-function formatItem($item)
+function formatItem(LostItem $item)
 {
-    $formattedItem = (object) [
+    $itemFiles = $item->files()->get();
+
+    $formattedItem = [
         "id" => $item->id,
         "name" => $item->name,
         "description" => $item->description,
@@ -66,6 +70,7 @@ function formatItem($item)
         "finder" => $item->finder,
         "owner" => $item->owner,
         "found" => $item->found,
+        "images" => formatFiles($itemFiles),
         "dateCreated" => formatTime($item->created_at),
         "dateUpdated" => formatTime($item->updated_at)
     ];
@@ -74,14 +79,14 @@ function formatItem($item)
 }
 
 /**
-* Formats user from database to a more consistent format
-*
-* @param object $user - user whose data is to be formatted
-*
-* @return object - format
-*/
+ * Formats user from database to a more consistent format
+ *
+ * @param object $user - user whose data is to be formatted
+ *
+ * @return array - format
+ */
 function formatUser($user) {
-    $formattedUser = (object) [
+    $formattedUser = [
         "id" => $user->id,
         "username" => $user->username,
         "phone" => $user->phone,
@@ -90,6 +95,39 @@ function formatUser($user) {
     ];
 
     return $formattedUser;
+}
+
+/**
+ * Format item files
+ *
+ * @param $files
+ * @return array
+ */
+function formatFiles($files) {
+    $formattedFiles = [];
+    foreach($files as $file) {
+        $file = formatFile($file);
+        $formattedFiles[] = $file;
+    }
+
+    return $formattedFiles;
+}
+
+/**
+ * Format single item file
+ *
+ * @param $file
+ * @return array
+ */
+function formatFile($file) {
+    $formattedFile = [
+        "id" => $file->id,
+        "name" => $file->name,
+        "identity" => $file->identity,
+        "url" => $file->url
+    ];
+
+    return $formattedFile;
 }
 
 /**

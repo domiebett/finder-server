@@ -17,15 +17,16 @@ class FormatHelperTest extends TestCase
         $lostItem = LostItem::find(1)->first();
         $formattedItem =  formatItem($lostItem);
 
-        $this->assertObjectHasAttribute("id", $formattedItem);
-        $this->assertObjectHasAttribute("name", $formattedItem);
-        $this->assertObjectHasAttribute("description", $formattedItem);
-        $this->assertObjectHasAttribute("category", $formattedItem);
-        $this->assertObjectHasAttribute("finder", $formattedItem);
-        $this->assertObjectHasAttribute("owner", $formattedItem);
-        $this->assertObjectHasAttribute("found", $formattedItem);
-        $this->assertObjectHasAttribute("dateCreated", $formattedItem);
-        $this->assertObjectHasAttribute("dateUpdated", $formattedItem);
+        $this->assertArrayHasKey("id", $formattedItem);
+        $this->assertArrayHasKey("name", $formattedItem);
+        $this->assertArrayHasKey("description", $formattedItem);
+        $this->assertArrayHasKey("category", $formattedItem);
+        $this->assertArrayHasKey("finder", $formattedItem);
+        $this->assertArrayHasKey("owner", $formattedItem);
+        $this->assertArrayHasKey("found", $formattedItem);
+        $this->assertArrayHasKey("dateCreated", $formattedItem);
+        $this->assertArrayHasKey("dateUpdated", $formattedItem);
+        $this->assertArrayHasKey("images", $formattedItem);
     }
 
     /**
@@ -37,11 +38,9 @@ class FormatHelperTest extends TestCase
         $user = User::find(1)->first();
         $formattedUser = formatUser($user);
 
-        $this->assertObjectHasAttribute("id", $formattedUser);
-        $this->assertObjectHasAttribute("userName", $formattedUser);
-        $this->assertObjectHasAttribute("email", $formattedUser);
-        $this->assertObjectHasAttribute("firstName", $formattedUser);
-        $this->assertObjectHasAttribute("lastName", $formattedUser);
-        $this->assertObjectHasAttribute("location", $formattedUser);
+        $this->assertArrayHasKey("id", $formattedUser);
+        $this->assertArrayHasKey("username", $formattedUser);
+        $this->assertArrayHasKey("email", $formattedUser);
+        $this->assertArrayHasKey("location", $formattedUser);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Api\DriveApi;
+use App\Models\ItemFile;
 use App\Models\LostItem;
 use Illuminate\Http\Request;
 use App\Exceptions\UnauthorizedException;
@@ -16,7 +18,6 @@ class ItemController extends Controller
      */
     public function __construct()
     {
-        //
     }
 
     /**
@@ -58,17 +59,17 @@ class ItemController extends Controller
 
         $currentUser = $request->user();
         $currentUser->phone = $request->get("phone");
+        $currentUser->save();
 
         $item = new LostItem($request->only("name", "description", "category"));
+        $item->setReporter($request->reporter, $currentUser->id);
+        $item->save();
 
-        if ($request->reporter === "owner") {
-            $item->owner = $currentUser->id;
-        } else if ($request->reporter === "finder") {
-            $item->finder = $currentUser->id;
+        if ($file = $request->file("photo")) {
+            $this->saveItemFile($item, $file);
         }
 
-        $currentUser->save();
-        $item->save();
+        $item = formatItem($item);
 
         return $this->respond($item, 201);
     }

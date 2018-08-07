@@ -28,10 +28,8 @@ abstract class TestCase extends Laravel\Lumen\Testing\TestCase
             factory(\App\Models\User::class)->make(
                 [
                     "id" => $userId,
-                    "user_name" => "Dominic Bett",
+                    "username" => "Dominic Bett",
                     "email" => "dominic@example.com",
-                    "first_name" => "Dominic",
-                    "last_name" => "Bett",
                     "location" => "Nairobi",
                     "password" => "password"
                 ]

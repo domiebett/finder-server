@@ -7,6 +7,7 @@ use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use phpDocumentor\Reflection\Types\Integer;
 
 class LostItem extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -41,7 +42,7 @@ class LostItem extends Model implements AuthenticatableContract, AuthorizableCon
      *
      * @param $params - filter parameters
      *
-     * @return $lostItems - filtered items
+     * @return LostItem $lostItems - filtered items
      */
     public static function buildItemsQuery($params)
     {
@@ -73,6 +74,22 @@ class LostItem extends Model implements AuthenticatableContract, AuthorizableCon
     }
 
     /**
+     * Sets the reporter of a lost item.
+     *
+     * @param String $reporter
+     * @param Integer $currentUserId
+     */
+    public function setReporter(String $reporter, $currentUserId) {
+        switch ($reporter) {
+            case "owner":
+                $this->owner = $currentUserId;
+                break;
+            case "finder":
+                $this->finder = $currentUserId;
+        }
+    }
+
+    /**
      * Get the owner who lost this item
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -100,6 +117,11 @@ class LostItem extends Model implements AuthenticatableContract, AuthorizableCon
     public function category()
     {
         return $this->belongsTo("App\Models\Category", "category");
+    }
+
+    public function files()
+    {
+        return $this->hasMany("App\Models\ItemFile", "item");
     }
 
     /**

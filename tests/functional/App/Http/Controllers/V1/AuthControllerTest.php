@@ -7,7 +7,7 @@ use TestCase;
 class AuthControllerTest extends TestCase
 {
     private $user = [
-        "user_name" => "Dominic Bett",
+        "username" => "Dominic Bett",
         "email" => "dominic@example.com",
         "password" => "password"
     ];

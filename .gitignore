@@ -21,3 +21,4 @@ Homestead.json
 
 #Text editors and IDES.
 .idea/
+.env

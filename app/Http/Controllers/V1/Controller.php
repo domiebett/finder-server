@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Api\DriveApi;
+use App\Models\ItemFile;
+use App\Models\LostItem;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
+
+    protected $driveApi;
 
     private const SIGNIN_RULES = [
         'email'    => 'required|email|max:255',
@@ -53,6 +59,9 @@ class Controller extends BaseController
         "addCategory" => self::ADD_CATEGORY_MESSAGES
     ];
 
+    public function __construct() {
+    }
+
     /**
      * Validates requests depending on the rule set selected
      *
@@ -94,5 +103,24 @@ class Controller extends BaseController
         return new Response([
             "message" => $message,
         ], $httpStatus);
+    }
+
+    /**
+     * Save files belonging to items
+     *
+     * @param LostItem $item
+     * @param UploadedFile $file
+     */
+    protected function saveItemFile(LostItem $item, UploadedFile $file) {
+        $this->driveApi = new DriveApi();
+        $driveFile = $this->driveApi->addFile($file);
+
+        $file = new ItemFile();
+        $file->name = $driveFile->name;
+        $file->identity = $driveFile->id;
+        $file->url = $driveFile->webContentLink;
+        $file->item = $item->id;
+
+        $file->save();
     }
 }

@@ -32,9 +32,3 @@ $router->group(["prefix" => "api/v1/categories"], function($router) {
     $router->get("/", "V1\CategoryController@index");
     $router->post("/", ["middleware" => "admin", "uses" => "V1\CategoryController@store"]);
 });
-
-// Routes for files
-$router->group(["prefix" => "api/v1/files"], function($router) {
-    $router->post("/", "V1\FileController@store");
-    $router->get("/", "V1\FileController@index");
-});
